@@ -1,100 +1,179 @@
 <?php
 namespace app\commands;
 
+use app\Commands\Rss;
 use Gui\Application;
-use Gui\Components\Button;
-use Gui\Components\InputText;
+use Gui\Components\Div;
 use Gui\Components\Label;
 use Gui\Components\Shape;
+use Gui\Components\Window;
 use yii\console\Controller;
+
+use app\models\WorldCupTeam;
+use app\models\search\WorldCupTeamSearch;
 
 class WorldCupTeamController extends Controller
 {
     public $message;
-    
+
     public function options($actionID)
     {
         return ['message'];
     }
-    
+
     public function optionAliases()
     {
         return ['m' => 'message'];
     }
-    
+
     public function actionIndex()
     {
-        $application = new Application();
+      $teams = WorldCupTeam::find()->all();
+$application = new Application([
+    'backgroundColor' => '#181818',
+    'height' => 740,
+    'left' => 248,
+    'title' => 'php.internals reader',
+    'top' => 50,
+    'width' => 860,
+]);
+$application->on('start', function () use ($application) {
+    new Label([
+        'backgroundColor' => '#181818',
+        'fontColor' => '#FFFFFF',
+        'fontFamily' => 'Gill Sans',
+        'fontSize' => 30,
+        'left' => 25,
+        'text' => 'World Cup Teams',
+        'top' => 25,
+    ]);
+    $loading = new Label([
+        'fontColor' => '#a0a0a0',
+        'fontFamily' => 'Gill Sans',
+        'fontSize' => 20,
+        'left' => 25,
+        'text' => 'Loading messages...',
+        'top' => 80,
+    ]);
+    $application->getLoop()->addTimer(1, function () use ($loading) {
+        $messages = Rss::getLastest();
+        $postWindow = null;
+        $loading->setVisible(false);
+        new Label([
+            'fontColor' => '#a0a0a0',
+            'fontFamily' => 'Lucida Sans Unicode',
+            'fontSize' => 13,
+            'left' => 25,
+            'text' => 'ID',
+            'top' => 80,
+            'width' => 100,
+        ]);
+        new Label([
+            'fontColor' => '#a0a0a0',
+            'fontFamily' => 'Lucida Sans Unicode',
+            'fontSize' => 13,
+            'left' => 100,
+            'text' => 'Team Name',
+            'top' => 80,
+            'width' => 300,
+        ]);
+        new Label([
+            'fontColor' => '#a0a0a0',
+            'fontFamily' => 'Lucida Sans Unicode',
+            'fontSize' => 13,
+            'left' => 600,
+            'text' => 'Ranking',
+            'top' => 80,
+            'width' => 300,
+        ]);
+        new Shape([
+            'backgroundColor' => '#a0a0a0',
+            'borderColor' => '#a0a0a0',
+            'height' => 1,
+            'left' => 25,
+            'top' => 100,
+            'width' => 810
+        ]);
+        for ($i = 0, $numberOfMessages = count($teams); $i < $numberOfMessages; $i++) {
+            $link = $messages['links'][$i];
+            $title = $messages['titles'][$i];
+            $backgroundShape = new Shape([
+                'backgroundColor' => '#181818',
+                'borderColor' => '#181818',
+                'height' => 30,
+                'left' => 25,
+                'top' => 115 + ($i * 30),
+                'width' => 810,
+            ]);
+            $title = new Label([
+                'autoSize' => false,
+                'fontColor' => '#fcfcfc',
+                'fontFamily' => 'Lucida Sans Unicode',
+                'fontSize' => 13,
+                'height' => 20,
+                'left' => 25,
+                'text' => $title,
+                'top' => 120 + ($i * 30),
+                'width' => 550,
+            ]);
+            new Label([
+                'autoSize' => false,
+                'fontColor' => '#fcfcfc',
+                'fontFamily' => 'Lucida Sans Unicode',
+                'fontSize' => 13,
+                'height' => 20,
+                'left' => 600,
+                'text' => $messages['authors'][$i],
+                'top' => 120 + ($i * 30),
+                'width' => 260,
+            ]);
+            $clickFunction = function () use ($link) {
+                $content = Rss::getSingle($link);
+                $postWindow = new Window([
+                    'height' => 740,
+                    'width' => 860,
+                ]);
+                $div = new Div([
+                    'height' => 740,
+                    'width' => 860,
+                ], $postWindow);
+                new Label([
+                    'autoSize' => true,
+                    'text' => $content,
+                ], $div);
+            };
+            $mouseEnterFunction = function () use ($backgroundShape) {
+                $backgroundShape->setBackgroundColor('#282828');
+            };
+            $mouseLeaveFunction = function () use ($backgroundShape) {
+                $backgroundShape->setBackgroundColor('#181818');
+            };
+            $backgroundShape->on('mouseEnter', $mouseEnterFunction);
+            $title->on('mouseEnter', $mouseEnterFunction);
+            $backgroundShape->on('mouseLeave', $mouseLeaveFunction);
+            $title->on('mouseLeave', $mouseLeaveFunction);
+            $backgroundShape->on('mouseDown', $clickFunction);
+            $title->on('mouseDown', $clickFunction);
+        }
+    });
+});
+$application->run();
+    }
 
-        $application->on('start', function() use ($application) {
-            $label = (new Label())
-                ->setFontSize(20)
-                ->setLeft(90)
-                ->setText('Basic Example')
-                ->setTop(10);
+    public function actionCreate()
+    {
+      $application = new Application();
 
-            $button = (new Button())
-                ->setCounter(1)
-                ->setLeft(10)
-                ->setTop(80)
-                ->setValue('Hey, I\'m a button! Please, don\'t click me')
-                ->setWidth(300);
 
-            $input = (new InputText())
-                ->setLeft(10)
-                ->setValue('This input was made with PHP S2!')
-                ->setTop(50)
-                ->setWidth(300);
 
-            $phrases = [
-                'Ouch, I said "Don\'t click me"',
-                'Ok, stop',
-                'Please!',
-                'What you doing?',
-                'Nice, I know, you have a mouse',
-                'Yep, with the mouse you can click',
-                'Formating C:',
-                'Yeah, was a joke',
-                'Do you know about PHP-SP?',
-                'Drink coke',
-                'Click to skip this ad',
-            ];
+      $application->run();
+    }
 
-            $button->on('click', function() use ($button, $input, $phrases) {
-                $counter = $button->getCounter();
-                $button->setCounter(++$counter);
+    public function actionUpdate($id)
+    {
 
-                if ($counter < 10) {
-                    $input->setValue($phrases[$counter - 1]);
-                } elseif ($counter < 20) {
-                    $input->setValue('Please, stop! You already clicked ' . $counter . ' times');
-                } elseif ($counter == 20) {
-                    $input->setValue('Hehe, click again!');
-                    $button->setVisible(false);
-                }
+    }
+    public function actionDelete($id){
 
-                if ($counter < 10) {
-                    $counter = '0' . $counter;
-                }
-
-                $color = $counter * (1.0 / 6);
-
-                $r = (int)(3 * sin($color) + 3);
-                $g = (int)(3 * sin($color + 2 * (M_PI / 3)) + 3);
-                $b = (int)(3 * sin($color + 4 * (M_PI / 3)) + 3);
-
-                $color = '#' . dechex($r) . dechex($g) . dechex($b);
-
-                $shape = (new Shape())
-                    ->setBackgroundColor($color)
-                    ->setBorderColor($color)
-                    ->setHeight($counter * 5)
-                    ->setLeft($counter * 10)
-                    ->setTop(120)
-                    ->setWidth($counter * 5);
-            });
-        });
-
-        $application->run();
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c881b4facb3167a429d53eed88f2210f",
+    "content-hash": "78700b323267cef791ebdbebdc1c842c",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -264,24 +264,27 @@
         },
         {
             "name": "gabrielrcouto/php-gui",
-            "version": "v0.1.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gabrielrcouto/php-gui.git",
-                "reference": "8df4fb7c24e14c6215f6c1b9d45fe36fb4da51fa"
+                "reference": "ccf4dba8ec6d1e71aef3960ce2f57a08d32c478f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gabrielrcouto/php-gui/zipball/8df4fb7c24e14c6215f6c1b9d45fe36fb4da51fa",
-                "reference": "8df4fb7c24e14c6215f6c1b9d45fe36fb4da51fa",
+                "url": "https://api.github.com/repos/gabrielrcouto/php-gui/zipball/ccf4dba8ec6d1e71aef3960ce2f57a08d32c478f",
+                "reference": "ccf4dba8ec6d1e71aef3960ce2f57a08d32c478f",
                 "shasum": ""
             },
             "require": {
+                "php": ">=5.6",
                 "react/child-process": "^0.4.0"
             },
             "require-dev": {
+                "evert/phpdoc-md": "~0.2.0",
                 "phing/phing": "2.*",
-                "phpunit/phpunit": "4.5.*",
+                "phpdocumentor/phpdocumentor": "^2.8",
+                "phpunit/phpunit": "^4.8.35",
                 "squizlabs/php_codesniffer": "2.0.*@dev"
             },
             "type": "library",
@@ -309,7 +312,7 @@
                 "interface",
                 "php"
             ],
-            "time": "2016-04-08T12:48:28+00:00"
+            "time": "2018-02-24T13:52:59+00:00"
         },
         {
             "name": "react/child-process",
@@ -3407,7 +3410,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "gabrielrcouto/php-gui": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
